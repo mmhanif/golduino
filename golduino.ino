@@ -376,6 +376,10 @@ void draw_state(byte current[MATRIX_WIDTH][MATRIX_HEIGHT], byte last[MATRIX_WIDT
  */
 void set_colors() {
   switch (color_choice) {
+    case Input_Color:
+      color_new = input_color;
+      color_old.red = color_new.red / 2; color_old.green = color_new.green / 2; color_old.blue = color_new.blue / 2;
+      break;
     case Red:
       color_new.red = 255; color_new.green = 0; color_new.blue = 0;
       color_old.red = 100; color_old.green = 0; color_old.blue = 0;
