@@ -108,6 +108,11 @@ void loop() {
         mode = Running_Continuous;
         return;
       }
+      if (c == 'r') {
+        reset_state();
+        init_simulation();
+        return;
+      }
       break;
 
     case Running_Continuous:
@@ -119,6 +124,11 @@ void loop() {
       }
       if (c == 's') {
         mode = Running_Step;
+        return;
+      }
+      if (c == 'r') {
+        reset_state();
+        init_simulation();
         return;
       }
       next();
