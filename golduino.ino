@@ -101,7 +101,6 @@ void loop() {
       } 
       if (c == 'c') {
         mode = Configure;
-        reset_state();
         DEBUG_PRINTLN("Mode set to Configure");
         return;
       }
@@ -115,7 +114,6 @@ void loop() {
       c = read_char(false);
       if (c == 'c') {
         mode = Configure;
-        reset_state();
         DEBUG_PRINTLN("Mode set to Configure");
         return;
       }
@@ -147,18 +145,17 @@ void read_config() {
     case 's':
       DEBUG_PRINTLN("Mode set to Running_Step");
       mode = Running_Step;
-      init_simulation();
       break;
 
     case 't':
       DEBUG_PRINTLN("Mode set to Running_Continuous");
       mode = Running_Continuous;
-      init_simulation();
       break;
       
     case 'e':
       DEBUG_PRINTLN("Attempting to set seed");
       // Set seed
+      reset_state();
       s_choice = Serial.parseInt();
       if (s_choice > (int)Random_Choice) {
         s_choice = (int)Random_Choice; 
@@ -184,6 +181,7 @@ void read_config() {
         print_state(state_0);
         #endif
       }
+      seed_state();
       break;
 
     case 'l':
@@ -205,6 +203,7 @@ void read_config() {
         DEBUG_PRINT(input_color.green); DEBUG_PRINT(",");
         DEBUG_PRINT(input_color.blue);  DEBUG_PRINT(")");        
       }
+      set_colors();
       break;
 
     case 'i':
@@ -218,7 +217,6 @@ void read_config() {
     case 0:  // Timeout
     default:
       mode = Running_Continuous;
-      init_simulation();
       break;
   }
 }
@@ -241,7 +239,7 @@ void reset_state() {
 
 void init_simulation() {
   seed_state();
-  set_colors(color_choice);
+  set_colors();
 }
 
 void seed_state() {
@@ -343,7 +341,7 @@ void draw_state(byte current[MATRIX_WIDTH][MATRIX_HEIGHT], byte last[MATRIX_WIDT
   // If color_choice is Continuous_Random then we reset the calor each iteration,
   // otherwise it is only set when we call reset_state()
   if (color_choice == Continuous_Random) {
-    set_colors(color_choice);
+    set_colors();
   }
   rgb24 *color;
 
@@ -366,7 +364,7 @@ void draw_state(byte current[MATRIX_WIDTH][MATRIX_HEIGHT], byte last[MATRIX_WIDT
 /*
  * Set colors depending on color_choice
  */
-void set_colors(ColorChoice color_choice) {
+void set_colors() {
   switch (color_choice) {
     case Red:
       color_new.red = 255; color_new.green = 0; color_new.blue = 0;
