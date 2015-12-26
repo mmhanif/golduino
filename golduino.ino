@@ -155,6 +155,7 @@ void read_config() {
     case 's':
       DEBUG_PRINTLN("Mode set to Running_Step");
       mode = Running_Step;
+      next();
       break;
 
     case 't':
@@ -250,6 +251,7 @@ void reset_state() {
 void init_simulation() {
   seed_state();
   set_colors();
+  next(); //kickstart
 }
 
 void seed_state() {
