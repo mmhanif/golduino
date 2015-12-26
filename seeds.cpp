@@ -21,8 +21,8 @@ void seed_vertical_line(byte state[MATRIX_WIDTH][MATRIX_HEIGHT]) {
 void seed_diehard(byte state[MATRIX_WIDTH][MATRIX_HEIGHT]) {
   int origin = 13;
   state[origin  ][origin  ] = 1;
-  state[origin+1][origin+4] = 1;
-  state[origin+2][origin+5] = 1;
+  state[origin  ][origin+4] = 1;
+  state[origin  ][origin+5] = 1;
   state[origin  ][origin+6] = 1;
   state[origin+1][origin-1] = 1;
   state[origin+1][origin  ] = 1;

@@ -105,6 +105,10 @@ void loop() {
         DEBUG_PRINTLN("Mode set to Configure");
         return;
       }
+      if (c == 't') {
+        mode = Running_Continuous;
+        return;
+      }
       break;
 
     case Running_Continuous:
@@ -113,6 +117,10 @@ void loop() {
         mode = Configure;
         reset_state();
         DEBUG_PRINTLN("Mode set to Configure");
+        return;
+      }
+      if (c == 's') {
+        mode = Running_Step;
         return;
       }
       next();
