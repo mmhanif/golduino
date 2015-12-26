@@ -1,3 +1,7 @@
+/*
+ *  Various seed state for the Game of Life
+ */
+
 #include "gol.h"
 
 void seed_r_pentamino(byte state[MATRIX_WIDTH][MATRIX_HEIGHT]);

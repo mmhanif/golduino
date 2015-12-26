@@ -1,39 +1,47 @@
 #include "seeds.h"
 
+// http://www.conwaylife.com/wiki/R-pentomino
 void seed_r_pentamino(byte state[MATRIX_WIDTH][MATRIX_HEIGHT]) {
-  state[15][15] = 1;
-  state[16][15] = 1;
-  state[16][14] = 1;  
-  state[17][15] = 1;
-  state[17][16] = 1;
+  int origin = 15;
+  state[origin  ][origin  ] = 1;
+  state[origin+1][origin  ] = 1;
+  state[origin+1][origin-1] = 1;
+  state[origin+2][origin  ] = 1;
+  state[origin+2][origin+1] = 1;
 }
 
 void seed_vertical_line(byte state[MATRIX_WIDTH][MATRIX_HEIGHT]) {
-  state[15][15] = 1;
-  state[16][15] = 1;
-  state[17][15] = 1;
+  int origin = 15;
+  state[origin  ][origin  ] = 1;
+  state[origin+1][origin  ] = 1;
+  state[origin+2][origin  ] = 1;
 }
 
+// http://www.conwaylife.com/wiki/Die_hard
 void seed_diehard(byte state[MATRIX_WIDTH][MATRIX_HEIGHT]) {
-  state[13][13] = 1;
-  state[13][17] = 1;
-  state[13][18] = 1;
-  state[13][19] = 1;
-  state[14][12] = 1;
-  state[14][13] = 1;
-  state[15][18] = 1;
+  int origin = 13;
+  state[origin  ][origin  ] = 1;
+  state[origin+1][origin+4] = 1;
+  state[origin+2][origin+5] = 1;
+  state[origin  ][origin+6] = 1;
+  state[origin+1][origin-1] = 1;
+  state[origin+1][origin  ] = 1;
+  state[origin+2][origin+5] = 1;
 }
 
+// http://www.conwaylife.com/wiki/Acorn
 void seed_acorn(byte state[MATRIX_WIDTH][MATRIX_HEIGHT]) {
-  state[13][13] = 1;
-  state[13][14] = 1;
-  state[13][17] = 1;
-  state[13][18] = 1;
-  state[13][19] = 1;
-  state[14][16] = 1;
-  state[15][14] = 1;
+  int origin = 13;
+  state[origin  ][origin  ] = 1;
+  state[origin  ][origin+1] = 1;
+  state[origin  ][origin+4] = 1;
+  state[origin  ][origin+5] = 1;
+  state[origin  ][origin+6] = 1;
+  state[origin+1][origin+3] = 1;
+  state[origin+2][origin+1] = 1;
 }
 
+// https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life#Examples_of_patterns
 void seed_pattern_10_Living(byte state[MATRIX_WIDTH][MATRIX_HEIGHT]) {
   int origin = 14;
   state[origin  ][origin  ] = 1;
@@ -48,6 +56,7 @@ void seed_pattern_10_Living(byte state[MATRIX_WIDTH][MATRIX_HEIGHT]) {
   state[origin+5][origin+6] = 1;
 }
 
+// https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life#Examples_of_patterns
 void seed_pattern_5_x_5(byte state[MATRIX_WIDTH][MATRIX_HEIGHT]) {
   int origin = 14;
   state[origin  ][origin  ] = 1;

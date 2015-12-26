@@ -1,11 +1,18 @@
 /*
-    SmartMatrix Features Demo - Louis Beaudoin (Pixelmatix)
-    This example code is released into the public domain
+    Conway's Game of Life implemented for the SmartMatrix Display (http://docs.pixelmatix.com/SmartMatrix/postkick.html)
+
+    The program reads commands from the serial port to configure various parameters and then run the simulation
+    
+    Based on code from SmartMatrix Features Demo - Louis Beaudoin (Pixelmatix)
 */
 
 #include <SmartMatrix3.h>
 #include "gol.h"
 #include "seeds.h"
+
+/* 
+ *  These lines come straight from the SmartMatrix Features Demo code
+ */
 
 #define COLOR_DEPTH 24                  // known working: 24, 48 - If the sketch uses type `rgb24` directly, COLOR_DEPTH must be 24
 const uint8_t kMatrixWidth = 32;        // known working: 32, 64, 96, 128
@@ -21,38 +28,34 @@ SMARTMATRIX_ALLOCATE_BACKGROUND_LAYER(backgroundLayer, kMatrixWidth, kMatrixHeig
 
 const int defaultBrightness = 100*(255/100);    // full brightness
 //const int defaultBrightness = 15*(255/100);    // dim: 15% brightness
-const int defaultScrollOffset = 6;
-//const rgb24 defaultBackgroundColor = {0x40, 0, 0};
 const rgb24 defaultBackgroundColor = {0, 0, 0};
 
-// Teensy 3.0 has the LED on pin 13
-const int ledPin = 13;
-
+// Uncomment line below for debug printouts
 //#define DEBUG 1
-#define True 1
-#define False 0
 
 #define NUM_SEEDS 6
 #define ITERATION_INTERVAL 250  // milliseconds
 enum ColorChoice { Red = 0, Green, Blue, Random, Continuous_Random};
-ColorChoice colorChoice = Red;
-rgb24 color_new;
-rgb24 color_old;
 
-byte state_0[MATRIX_WIDTH][MATRIX_HEIGHT];
-byte state_1[MATRIX_WIDTH][MATRIX_HEIGHT];
-int current_state = 0;
-int static_count = 0;
-int current_seed = 0;
-int iterations = 0;
-int max_iterations = 300;
-bool step = False;
+/* 
+ *  Various state variables used in the simulation
+ */
+byte state_0[MATRIX_WIDTH][MATRIX_HEIGHT]; // state of cells: 1 for alive, 0 for dead 
+byte state_1[MATRIX_WIDTH][MATRIX_HEIGHT]; // We toggle between state_0 and state_1 as we iterate
+int current_state = 0;                     // 0 => state state_0, 1 => state_1
+int static_count = 0;                      // number of times there has been no change from one state to the next
+int current_seed = 0;                      // Which seed state did we initialize the first iteration with 
+int iterations = 0;                        // How many iterations have we done so far
+int max_iterations = 300;                  // Max number of iterations before we reset (changes depending on seed)
+bool step = false;                         // True => single step, waiting for serial input before each step
+ColorChoice colorChoice = Red;             // Use one of Red, Green, Blue or a Random color, or Random color each iteration
+rgb24 color_new;                           // Color to use for newly alive cells
+rgb24 color_old;                           // Color to use for cells were alive in last iteration
 
-// the setup() method runs once, when the sketch starts
+/*
+ * Perform initial set of the matix and make sure all parameters are reset
+ */
 void setup() {
-  // initialize the digital pin as an output.
-  pinMode(ledPin, OUTPUT);
-
   Serial.begin(38400);
 
   matrix.addLayer(&backgroundLayer); 
@@ -67,6 +70,46 @@ void setup() {
   reset_state(random(NUM_SEEDS));
 }
 
+/*
+ *  Read parameters from serial port and run next iteration
+ *  If we have gone past max iterations, reset with a new random seed
+ */
+void loop() {
+
+  while (step and (Serial.available() > 0)) {
+
+    char c = Serial.read();
+    if (c == '\n') {
+      next();
+    }
+    if (c == 'r') {
+      reset_state(current_seed);
+    }
+    if (c == 'n') {
+      int seed = Serial.parseInt();
+      reset_state(seed);
+    }
+    if (c == 'c') {
+      step = false;
+      break;
+    }
+  }
+
+  if (!step) {
+    next();
+  }
+
+  if (iterations > max_iterations) {
+    reset_state(random(NUM_SEEDS));
+  }
+  
+  delay(ITERATION_INTERVAL);  // wait for half a second
+}
+
+/*
+ * Reset state based on specified seed
+ * color choice is set randomly
+ */
 void reset_state(int seed) {
   clear_state(state_0);
   clear_state(state_1);
@@ -106,40 +149,11 @@ void reset_state(int seed) {
   }
 }
 
-// the loop() method runs over and over again,
-// as long as the board has power
-void loop() {
 
-  while (step and (Serial.available() > 0)) {
-
-    char c = Serial.read();
-    if (c == '\n') {
-      next();
-    }
-    if (c == 'r') {
-      reset_state(current_seed);
-    }
-    if (c == 'n') {
-      int seed = Serial.parseInt();
-      reset_state(seed);
-    }
-    if (c == 'c') {
-      step = False;
-      break;
-    }
-  }
-
-  if (!step) {
-    next();
-  }
-
-  if (iterations > max_iterations) {
-    reset_state(random(NUM_SEEDS));
-  }
-  
-  delay(ITERATION_INTERVAL);  // wait for half a second
-}
-
+/*
+ * Iterate game of life
+ * If we determine we are in a static state then reset
+ */
 void next() {
   if (current_state == 0) {
     draw_state(state_0, state_1);
@@ -170,26 +184,35 @@ void next() {
 #endif
 }
 
+/*
+ * Returns true if state_0 == state_1
+ */
 bool is_static() {
   for (int x = 0; x < MATRIX_WIDTH; x++) {
     for (int y = 0; y < MATRIX_HEIGHT; y++) {
       if (state_0[x][y] != state_1[x][y]) {
-        return False;
+        return false;
       }
     } 
   }
-  return True; 
+  return true; 
 }
 
+/* 
+ *  Draw given state on SmartMatrix
+ */
 void draw_state(byte current[MATRIX_WIDTH][MATRIX_HEIGHT], byte last[MATRIX_WIDTH][MATRIX_HEIGHT]) {
+  // If colorChoice is Continuous_Random then we reset the calor each iteration,
+  // otherwise it is only set when we call reset_state()
   if (colorChoice == Continuous_Random) {
     set_colors(colorChoice);
   }
   rgb24 *color;
 
+  // Fill layer with the background color
   backgroundLayer.fillScreen(defaultBackgroundColor);
 
-  // Draw state:
+  // Color in living cells
   for (int x = 0; x < MATRIX_WIDTH; x++) {
     for (int y = 0; y < MATRIX_HEIGHT; y++) {
       if (current[x][y] == 1) {
@@ -202,6 +225,9 @@ void draw_state(byte current[MATRIX_WIDTH][MATRIX_HEIGHT], byte last[MATRIX_WIDT
   backgroundLayer.swapBuffers();      
 }
 
+/*
+ * Set colors depending on colorChoice
+ */
 void set_colors(ColorChoice colorChoice) {
   switch (colorChoice) {
     case Red:
