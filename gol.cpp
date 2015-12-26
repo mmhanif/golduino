@@ -1,4 +1,5 @@
 #include "gol.h"
+#include "debugutils.h"
 
 /*
  *  Given current state, set values in next state
@@ -37,13 +38,13 @@ bool _should_live(byte state[MATRIX_WIDTH][MATRIX_HEIGHT], int x, int y) {
                       or  (living_neighbors == 3));
 #ifdef DEBUG
   if ((living_neighbors > 0) or _is_alive(state, x, y)) {
-    Serial.print(x);
-    Serial.print(",");
-    Serial.print(y);
-    Serial.print("   is_alive = ");
-    Serial.print(_is_alive(state,x,y));
-    Serial.print("   living neighbors = ");
-    Serial.println(living_neighbors);
+    DEBUG_PRINT(x);
+    DEBUG_PRINT(",");
+    DEBUG_PRINT(y);
+    DEBUG_PRINT("   is_alive = ");
+    DEBUG_PRINT(_is_alive(state,x,y));
+    DEBUG_PRINT("   living neighbors = ");
+    DEBUG_PRINTLN(living_neighbors);
   }
 #endif
 
