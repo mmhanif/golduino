@@ -16,23 +16,26 @@ def init(port, baudrate):
     _ser.open()
 
 def configure():
+    global _mode
     if _mode != 'Configure':
         _ser.write('c')
         _mode = 'Configure'
 
 def step():
+    global _mode
     if _mode != 'Running_Step':
         _ser.write('s')
         _mode = 'Running_Step'
 
 def run():
+    global _mode
     if _mode != 'Running_Continuous':
         _ser.write('t')
         _mode = 'Running_Continuous'
 
 def reset():
     _ser.write('r')
-    // _mode stays whatever it was before
+    # _mode stays whatever it was before
 
 # If seed_choice == 'Input_Seed',
 # points should contain a list of two-integer tuples
@@ -50,8 +53,8 @@ def configure_seed(seed_choice, points=[]):
 def configure_color(color_choice, rgb=None):
     if _mode == 'Configure':
         if color_choice in ColorChoices:
-            _ser.write('e%d' % SeedChoiceDict[color_choice])
-            if seed_choice == 'Input_Color':
+            _ser.write('e%d' % ColorChoiceDict[color_choice])
+            if color_choice == 'Input_Color':
                 _ser.write(',%d,%d,%d' % rgb)
 
 def configure_iteration_interval(interval):
