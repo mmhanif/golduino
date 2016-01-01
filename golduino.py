@@ -53,7 +53,7 @@ def configure_seed(seed_choice, points=[]):
 def configure_color(color_choice, rgb=None):
     if _mode == 'Configure':
         if color_choice in ColorChoices:
-            _ser.write('e%d' % ColorChoiceDict[color_choice])
+            _ser.write('l%d' % ColorChoiceDict[color_choice])
             if color_choice == 'Input_Color':
                 _ser.write(',%d,%d,%d' % rgb)
 
