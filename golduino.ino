@@ -162,6 +162,12 @@ void read_config() {
       DEBUG_PRINTLN("Mode set to Running_Continuous");
       mode = Running_Continuous;
       break;
+
+    case 'r':
+      DEBUG_PRINTLN("Reset seed");
+      reset_state();
+      init_simulation();
+      break;
       
     case 'e':
       DEBUG_PRINTLN("Attempting to set seed");
