@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Golduino Configure</title>
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+
+<link rel="stylesheet" href="http://code.jquery.com/mobile/1.3.2/jquery.mobile-1.3.2.min.css" />
+<script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+<script src="http://code.jquery.com/mobile/1.3.2/jquery.mobile-1.3.2.min.js"></script>
+
+<script type="text/javascript" language="javascript">
+$(document).ready(function() {
+  $.ajaxSetup({ cache: false });
+  var interval_data;
+  var seed_data;
+  var color_data;
+  var interval_slider_changed = false;
+  var color_slider_changed = false;
+  $("#interval-slider").change(function() {interval_slider_changed = true;});
+  setInterval(function() {
+      if ( interval_slider_changed ) {
+          interval_slider_changed = false;
+          interval_data = {interval: $("#interval-slider").val()};
+          console.log(interval_data);
+          $.get('/_interval', interval_data);
+      }
+  }, 1000);
+
+  $("#select-seed").change(function() {
+      seed_data = {seed: $("#select-seed").val()};
+      console.log(seed_data);
+      $.get('/_seed', seed_data);
+  });
+
+  $(".color_slider").slider("disable");
+  $("#select-color").change(function() {
+      if ( $("#select-color").val() == 'Input_Color') {
+        $(".color_slider").slider("enable");
+      }
+      else {
+        $(".color_slider").slider("disable");
+      }
+      color_data = {choice: $("#select-color").val(), red: $("#red_slider").val(), green: $("#green_slider").val(), blue: $("#blue_slider").val()};
+      console.log(color_data);
+      $.get('/_color', color_data);
+  });
+
+  $(".color_slider").change(function() {color_slider_changed = true;});
+  setInterval(function() {
+      if (( $("#select-color").val() == 'Input_Color') && (color_slider_changed )) {
+          color_slider_changed = false;
+          color_data = {choice: 'Input_Color', red: $("#red_slider").val(), green: $("#green_slider").val(), blue: $("#blue_slider").val()};
+          console.log(color_data);
+          $.get('/_color', color_data);
+      }
+  }, 1000);
+
+});
+</script>
+
+</head>
+
+<style>
+h3, h4 {text-align: center;}
+span {font-weight: bold;}
+</style>
+
+<body>
+  <div data-role="page">
+
+  	<div data-role="header">
+  		<h1>Golduino - a Game of Life simulator</h1>
+  	</div><!-- /header -->
+
+    <label for="interval-slider">Iteration Interval:</label>
+    <input type="range" name="interval" id="interval-slider" value="250" min="50" max="1000" step="50" data-highlight="true" />
+
+    <label for="select-seed" class="select">Seed:</label>
+    <select name="select-seed" id="select-seed">
+       <option value="R_Pentamino">R Pentamino</option>
+       <option value="Acorn">Acorn</option>
+       <option value="Diehard">Diehard</option>
+       <option value="Pattern_10">Pattern 10</option>
+       <option value="Pattern_5x5">Pattern 5x5</option>
+       <option value="Random_Seed" selected>Random Seed</option>
+       <option value="Random_Choice">Random Choice</option>
+    </select>
+
+    <label for="select-color" class="select">Color:</label>
+    <select name="select-color" id="select-color">
+       <option value="Input_Color">Set Color</option>
+       <option value="Random_Color" selected>Random Color</option>
+       <option value="Continuous_Random">Continuous Random</option>
+    </select>
+
+    <form>
+        <label for="red_slider">RED:</label>
+        <input class="color_slider" type="range" name="red_slider" id="red_slider" min="0" max="255" value="100">
+        <label for="green_slider">GREEN:</label>
+        <input class="color_slider" type="range" name="green_slider" id="green_slider" min="0" max="255" value="100">
+        <label for="blue_slider">BLUE:</label>
+        <input class="color_slider" type="range" name="blue_slider" id="blue_slider" min="0" max="255" value="100">
+    </form>
+
+
+    <a href="index.html" data-role="button">Done</a>
+
+
+  	</div><!-- /content -->
+
+  </div><!-- /page -->
+
+</body>
+</html>

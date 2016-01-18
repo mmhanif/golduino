@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Golduino</title>
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+
+<link rel="stylesheet" href="http://code.jquery.com/mobile/1.3.2/jquery.mobile-1.3.2.min.css" />
+<script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+<script src="http://code.jquery.com/mobile/1.3.2/jquery.mobile-1.3.2.min.js"></script>
+
+<script type="text/javascript" language="javascript">
+$(document).ready(function() {
+  $.ajaxSetup({ cache: false });
+
+  $("#reset").click(function(event) {
+    $("#msg").load("reset").fadeIn("fast");
+    $("#msg").fadeOut("slow");
+  });
+
+  $("#step").click(function(event) {
+    $("#msg").load("step").fadeIn("fast");
+    $("#msg").fadeOut("slow");
+  });
+
+  $("#continue").click(function(event) {
+    $("#msg").load("continue").fadeIn("fast");
+    $("#msg").fadeOut("slow");
+  });
+
+});
+</script>
+
+</head>
+
+<style>
+h3, h4 {text-align: center;}
+span {font-weight: bold;}
+</style>
+
+<body>
+  <div data-role="page">
+
+  	<div data-role="header">
+  		<h1>Golduino - a Game of Life simulator</h1>
+  	</div><!-- /header -->
+
+  	<div data-role="content">
+
+      <a href="configure.html" data-role="button">Configure</a>
+
+      <input type="button" id="step" value="Step" />
+
+      <input type="button" id="continue" value="Continue" />
+
+      <input type="button" id="reset" value="Reset" />
+
+      <div id="msg" style="background-color:silver;">
+      </div><!-- /msg-container -->
+
+  	</div><!-- /content -->
+
+  </div><!-- /page -->
+
+</body>
+</html>
