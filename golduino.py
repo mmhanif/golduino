@@ -26,6 +26,8 @@ def step():
     if _mode != 'Running_Step':
         _ser.write('s')
         _mode = 'Running_Step'
+    else:
+        _ser.write('n')
 
 def run():
     global _mode
@@ -60,7 +62,3 @@ def configure_color(color_choice, rgb=None):
 def configure_iteration_interval(interval):
     if _mode == 'Configure':
         _ser.write('i%d' % interval)
-
-def step_next():
-    if _mode == 'Running_Step':
-        _ser.write('n')
